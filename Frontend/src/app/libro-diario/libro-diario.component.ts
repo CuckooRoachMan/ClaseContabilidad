@@ -17,10 +17,11 @@ export class LibroDiarioComponent implements OnInit {
 
   nuevoPda={
     fecha_creacion: null,
-    numero_pda: 0,
+    numeroPda: 0,
     nombreRegistro:'',
     listaLineas:[] as any,
-    total: 0
+    totalDebe: 0,
+    totalHaber: 0
   };
 
   //nuevoPda.listaLineas= [] as  any;
@@ -83,10 +84,18 @@ export class LibroDiarioComponent implements OnInit {
   }
 
   agregarLinea(){
-    console.log(this.nuevaLinea);
-    this.nuevoPda.listaLineas.push(this.nuevaLinea);
-    console.log(this.nuevoPda);
 
+    this.nuevoPda.listaLineas.push(this.nuevaLinea);
+    this.nuevoPda.totalDebe=this.nuevoPda.totalDebe+this.nuevaLinea.debe;
+    this.nuevoPda.totalHaber=this.nuevoPda.totalHaber+this.nuevaLinea.haber;
+    this.nuevaLinea={
+      numero:0,
+      cuenta: '',
+      subcuenta: '',
+      debe:0,
+      haber:0,
+    };
+    console.log(this.nuevoPda)
   }
 
 
