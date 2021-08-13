@@ -12,7 +12,7 @@ export class LibroDiarioComponent implements OnInit {
     cuenta: '',
     subcuenta: '',
     debe:0,
-    haber:0,
+    haber:0
   };
 
   nuevoPda={
@@ -23,6 +23,11 @@ export class LibroDiarioComponent implements OnInit {
     totalDebe: 0,
     totalHaber: 0
   };
+  listaPda=[] as any;
+
+  hasManyEntries=false;  //variable de control si hay entradas en haber y en una sola linea
+  pdaNoCuadra=false;    //variable de control si el debe y haber del pda no cuedra
+  faltanCamposPda=false;
 
   //nuevoPda.listaLineas= [] as  any;
 
@@ -85,17 +90,45 @@ export class LibroDiarioComponent implements OnInit {
 
   agregarLinea(){
 
-    this.nuevoPda.listaLineas.push(this.nuevaLinea);
-    this.nuevoPda.totalDebe=this.nuevoPda.totalDebe+this.nuevaLinea.debe;
-    this.nuevoPda.totalHaber=this.nuevoPda.totalHaber+this.nuevaLinea.haber;
-    this.nuevaLinea={
-      numero:0,
-      cuenta: '',
-      subcuenta: '',
-      debe:0,
-      haber:0,
-    };
-    console.log(this.nuevoPda)
+    if ((this.nuevaLinea.debe+this.nuevaLinea.haber==this.nuevaLinea.debe)||(this.nuevaLinea.debe+this.nuevaLinea.haber==this.nuevaLinea.haber) ){     //si se cumple que suma mas que una de los valores, significa que no es igual y no pasa
+      this.hasManyEntries=false;
+      this.nuevoPda.listaLineas.push(this.nuevaLinea);
+      this.nuevoPda.totalDebe=this.nuevoPda.totalDebe+this.nuevaLinea.debe;
+      this.nuevoPda.totalHaber=this.nuevoPda.totalHaber+this.nuevaLinea.haber;
+      this.nuevaLinea={
+        numero:0,
+        cuenta: '',
+        subcuenta: '',
+        debe:0,
+        haber:0,
+      };
+    }
+    else {
+      this.hasManyEntries=true;
+      this.nuevaLinea.debe=0;
+      this.nuevaLinea.haber=0;
+      console.log("Too many entries");
+      console.log(this.nuevaLinea)
+    }
+
+    //console.log(this.nuevoPda)
+  }
+  agregarPda(){
+    if ((this.nuevoPda.nombreRegistro=='')||(this.nuevoPda.fecha_creacion==null)||(this.nuevoPda.totalDebe==0)||(this.nuevoPda.totalHaber==0)){
+      this.faltanCamposPda=true;
+      console.log("Faltan Campos");
+    }
+    else if(this.nuevoPda.totalDebe==this.nuevoPda.totalHaber){
+      this.faltanCamposPda=false;
+      this.pdaNoCuadra=false;
+      this.listaPda.push(this.nuevoPda)
+      console.log("Pda Agregado exitosamente: ")
+      console.log(this.nuevoPda)
+    }
+    else{
+      this.pdaNoCuadra=true;
+      console.log("No cuadra")
+    }
   }
 
 

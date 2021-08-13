@@ -34,11 +34,14 @@
       #haber="ngModel"
     >
     <br>
+    <div *ngIf="hasManyEntries" class="alert alert-danger box-msg alert-dismissible fade show" role="alert" id=fixedalert>
+      <strong class="labelForm">No se puede cargar y acreditar al mismo tiempo. Uno de los campos debe ser cero.</strong>
+    </div>
 
     <br>
     <button class="btn btn-dark" type="button" name="button"(click)="agregarLinea()">Agregar Linea a PDA</button>
 
-    <form class="" action="index.html" method="post" >
+    <form class="" (submit)=agregarPda() action="index.html" method="post" >
     <br>
     <h3>PDA</h3><br>
     <label for="">Fecha: </label>
@@ -64,10 +67,15 @@
         <tr>
           <th scope="row">Nombre de Registro: </th>
           <td>
-            <input type="text" name="" value="">
+            <input type="text"  value="" id="nombreRegistro"
+              maxlength="255" minlength="1"
+              required minlength="1"
+              [(ngModel)]="nuevoPda.nombreRegistro" name="nombreRegistro"
+              #nombreRegistro="ngModel"
+            >
           </td>
           <td>
-            
+
           </td>
           <td>
             <label for="">{{nuevoPda.totalDebe}}</label>
@@ -81,10 +89,13 @@
 
     </tbody>
   </table>
-  <button class="btn btn-dark" type="button" name="button">Agregar PDA</button>
-
-
-
+  <div *ngIf="pdaNoCuadra" class="alert alert-danger box-msg alert-dismissible fade show" role="alert" id=fixedalert>
+    <strong class="labelForm">El debe y el haber deben de tener las misma cantidad y ser distintos de cero para que el registro sea aceptado.</strong>
+  </div>
+  <div *ngIf="faltanCamposPda" class="alert alert-danger box-msg alert-dismissible fade show" role="alert" id=fixedalert>
+    <strong class="labelForm">Faltan campos para acceptar el registro.</strong>
+  </div>
+  <button class="btn btn-dark" type="submit" name="button">Agregar PDA</button>
   </form>
   </div>
   <div class="col-1">
