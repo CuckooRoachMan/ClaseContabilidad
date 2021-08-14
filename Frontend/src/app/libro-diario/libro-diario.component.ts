@@ -25,6 +25,15 @@ export class LibroDiarioComponent implements OnInit {
   };
   listaPda=[] as any;
 
+  listaTablasT=[      //Variable no en uso, para nested loops
+    {cuenta:"Bancos",
+    deberes: [] as any,
+    haberes: [] as any
+    }
+  ]
+  registrosT=[] as any;
+  tablasT=[] as any;
+
   hasManyEntries=false;  //variable de control si hay entradas en haber y en una sola linea
   pdaNoCuadra=false;    //variable de control si el debe y haber del pda no cuedra
   faltanCamposPda=false;
@@ -81,7 +90,8 @@ export class LibroDiarioComponent implements OnInit {
     'Gastos de Ventas',
     'Gastos Financieros',
     'Otros Gastos'
-  ]
+  ];
+
 
   constructor() { }
 
@@ -122,14 +132,68 @@ export class LibroDiarioComponent implements OnInit {
       this.faltanCamposPda=false;
       this.pdaNoCuadra=false;
       this.listaPda.push(this.nuevoPda)
-      console.log("Pda Agregado exitosamente: ")
-      console.log(this.nuevoPda)
+
+      this.nuevoPda.listaLineas.forEach((element:any) => {
+          this.registrosT.push({
+            cuenta: element.cuenta,
+            debe: element.debe,
+            haber: element.haber
+          });
+
+          if (!(this.tablasT.includes(element.cuenta))){
+            this.tablasT.push(element.cuenta);
+          }
+
+      });
+
+
+
+      console.log("Lista de Pdas")
+      console.log(this.listaPda);
+      console.log("registrosT")
+      console.log(this.registrosT);
+      console.log("TablasT")
+      console.log(this.tablasT);
     }
     else{
       this.pdaNoCuadra=true;
       console.log("No cuadra")
     }
+    //this.crearTablasT();
   }
+
+  crearTablasT(){
+    this.listaTablasT.forEach(tabla =>
+      this.listaPda.forEach( (pda:any) =>
+      {
+        pda.listaLineas.forEach((line:any) => {
+
+          console.log("tabla.cuenta");
+          console.log(tabla.cuenta);
+          console.log(line.cuenta);
+          if(tabla.cuenta==line.cuenta){
+            tabla.deberes.push(line.debe);
+            tabla.haberes.push(line.haber);
+
+          }
+          else {
+            this.listaTablasT.push({
+              cuenta: line.cuenta,
+              deberes: [line.debe] as any,
+              haberes: [line.haber] as any
+              });
+
+          };
+
+        });
+
+      }
+    )
+  );
+  console.log("Tablas T");
+  console.log(this.listaTablasT);
+
+}
 
 
 }

@@ -45,7 +45,12 @@
     <br>
     <h3>PDA</h3><br>
     <label for="">Fecha: </label>
-    <input type="date" name="" value="">
+    <input type="date"  value="" id="fecha_creacion"
+      maxlength="255" minlength="1"
+      required minlength="1"
+      [(ngModel)]="nuevoPda.fecha_creacion" name="fecha_creacion"
+      #fecha_creacion="ngModel"
+    >
     <table class="table table-dark" id="pda_input_table">
     <thead>
       <tr>
