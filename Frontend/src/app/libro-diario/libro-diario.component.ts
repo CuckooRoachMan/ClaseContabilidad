@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {MatTabsModule} from '@angular/material/tabs'; 
 
 @Component({
   selector: 'app-libro-diario',
@@ -33,6 +34,8 @@ export class LibroDiarioComponent implements OnInit {
   ]
   registrosT=[] as any;
   tablasT=[] as any;
+  balanzaComprobacion=[] as any;
+  balanzaComprobacionResultados=[] as any;
 
   hasManyEntries=false;  //variable de control si hay entradas en haber y en una sola linea
   pdaNoCuadra=false;    //variable de control si el debe y haber del pda no cuedra
@@ -141,25 +144,83 @@ export class LibroDiarioComponent implements OnInit {
           });
 
           if (!(this.tablasT.includes(element.cuenta))){
-            this.tablasT.push(element.cuenta);
+            this.tablasT.push(
+              element.cuenta
+
+            );
           }
 
       });
 
-
-
-      console.log("Lista de Pdas")
-      console.log(this.listaPda);
-      console.log("registrosT")
-      console.log(this.registrosT);
-      console.log("TablasT")
-      console.log(this.tablasT);
+      this.nuevoPda={
+        fecha_creacion: null,
+        numeroPda: 0,
+        nombreRegistro:'',
+        listaLineas:[] as any,
+        totalDebe: 0,
+        totalHaber: 0
+      };
     }
     else{
       this.pdaNoCuadra=true;
       console.log("No cuadra")
     }
-    //this.crearTablasT();
+    //console.log("Lista de Pdas")
+   //console.log(this.listaPda);
+    //console.log("registrosT")
+    //console.log(this.registrosT);
+    console.log("TablasT")
+    console.log(this.tablasT);
+    this.crearBalanza();
+    console.log("Balanza");
+    console.log(this.balanzaComprobacion)
+    console.log("Resultados de Balanza");
+    console.log(this.balanzaComprobacionResultados)
+  }
+
+  crearBalanza(){
+
+    this.balanzaComprobacion=[] as any;
+    this.balanzaComprobacionResultados=[] as any;
+
+
+    //Sumar los debes y haberes para los resultados
+    var i;
+    for (let i = 0; i < this.tablasT.length; i++) {
+      this.balanzaComprobacion.push(
+        {
+          cuenta:this.tablasT[i],
+          debe:[0] ,
+          haber:[0]
+        }
+      )
+    }
+    this.balanzaComprobacion.forEach((a:any) => {
+      this.registrosT.forEach((b:any) => {
+        if (a.cuenta===b.cuenta) {
+          a.debe[0]+=b.debe;
+          a.haber[0]+=b.haber;
+        }
+      });
+    });
+
+    //Calcular los resultados
+    this.balanzaComprobacionResultados=this.balanzaComprobacion;
+    this.balanzaComprobacionResultados.forEach((element:any) => {
+      if(element.debe[0]>element.haber[0]){
+        element.debe[0]=element.debe[0]-element.haber[0];
+        element.haber[0]=0;
+      }
+      else if (element.debe[0]<element.haber[0]) {
+        element.haber[0]=element.haber[0]-element.debe[0];
+        element.debe[0]=0;
+      }
+      else{
+        element.haber[0]=0;
+        element.debe[0]=0;
+      }
+
+    });
   }
 
   crearTablasT(){

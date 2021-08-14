@@ -6,6 +6,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { LibroDiarioComponent } from './libro-diario/libro-diario.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSliderModule } from '@angular/material/slider';
+import {MatBadgeModule} from '@angular/material/badge';
+import {MatTabsModule} from '@angular/material/tabs';
+
+
+
+
 
 const appRoutes: Routes = [
   { path: 'libro-diario', component: LibroDiarioComponent },
@@ -24,7 +32,11 @@ const appRoutes: Routes = [
       appRoutes,
       { enableTracing: true } // <-- debugging purposes only
     ),
-    NgbModule
+    NgbModule,
+    BrowserAnimationsModule,
+    MatSliderModule,
+    MatBadgeModule,
+    MatTabsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
