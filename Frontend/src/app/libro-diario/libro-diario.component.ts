@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {MatTabsModule} from '@angular/material/tabs'; 
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatCardModule} from '@angular/material/card';
 
 @Component({
   selector: 'app-libro-diario',
@@ -26,16 +27,19 @@ export class LibroDiarioComponent implements OnInit {
   };
   listaPda=[] as any;
 
-  listaTablasT=[      //Variable no en uso, para nested loops
-    {cuenta:"Bancos",
-    deberes: [] as any,
-    haberes: [] as any
-    }
-  ]
   registrosT=[] as any;
-  tablasT=[] as any;
-  balanzaComprobacion=[] as any;
-  balanzaComprobacionResultados=[] as any;
+  tablasT=[] as any;               //arreglo solo el nombre de las cuentas, para saber las cuentas de la partida actual
+  balanzaComprobacion=[] as any;   //arreglo guarda el nombre de las cuentas (Misma)
+  balanzaComprobacionResultados=[] as any;   //arreglo guarda los totales de las operaciones de tabla t (Misma tabla, se debe borrar)
+  tablasMayorizacion=[] as any;     //arreglo donde guardan los objetos de la mayorizacion
+  contadorPda=1;
+
+
+  balanzaTotalDebe=0;    //Variables guardan los resultados de la balanza de comprobacion, para confirmar que son iguales
+  balanzaTotalHaber=0;
+
+
+
 
   hasManyEntries=false;  //variable de control si hay entradas en haber y en una sola linea
   pdaNoCuadra=false;    //variable de control si el debe y haber del pda no cuedra
@@ -132,6 +136,8 @@ export class LibroDiarioComponent implements OnInit {
       console.log("Faltan Campos");
     }
     else if(this.nuevoPda.totalDebe==this.nuevoPda.totalHaber){
+      this.nuevoPda.numeroPda=this.contadorPda;
+      this.contadorPda+=1;
       this.faltanCamposPda=false;
       this.pdaNoCuadra=false;
       this.listaPda.push(this.nuevoPda)
@@ -146,10 +152,8 @@ export class LibroDiarioComponent implements OnInit {
           if (!(this.tablasT.includes(element.cuenta))){
             this.tablasT.push(
               element.cuenta
-
             );
           }
-
       });
 
       this.nuevoPda={
@@ -160,6 +164,8 @@ export class LibroDiarioComponent implements OnInit {
         totalDebe: 0,
         totalHaber: 0
       };
+      this.crearBalanza();
+
     }
     else{
       this.pdaNoCuadra=true;
@@ -169,20 +175,26 @@ export class LibroDiarioComponent implements OnInit {
    //console.log(this.listaPda);
     //console.log("registrosT")
     //console.log(this.registrosT);
-    console.log("TablasT")
-    console.log(this.tablasT);
-    this.crearBalanza();
-    console.log("Balanza");
-    console.log(this.balanzaComprobacion)
-    console.log("Resultados de Balanza");
-    console.log(this.balanzaComprobacionResultados)
+    //console.log("TablasT")
+    //console.log(this.tablasT);
+
+
+    //console.log("Balanza");
+    //console.log(this.balanzaComprobacion)
+    //console.log("Tablas de Mayorizacion");
+    //console.log(this.tablasMayorizacion)
+    //console.log("Resultados de Balanza");
+    //console.log(this.balanzaComprobacionResultados)
   }
 
   crearBalanza(){
-
+    //Elimino los valores de las siguientes variables para evitar errores
     this.balanzaComprobacion=[] as any;
     this.balanzaComprobacionResultados=[] as any;
+    this.tablasMayorizacion=[] as any;
 
+    this.balanzaTotalDebe=0;
+    this.balanzaTotalHaber=0;
 
     //Sumar los debes y haberes para los resultados
     var i;
@@ -194,7 +206,30 @@ export class LibroDiarioComponent implements OnInit {
           haber:[0]
         }
       )
+      this.tablasMayorizacion.push(
+        {
+          cuenta:this.tablasT[i],
+          debe:[] ,
+          haber:[]
+        }
+      )
     }
+
+    this.tablasMayorizacion.forEach((a:any) => {
+      this.registrosT.forEach((b:any) => {
+        if (a.cuenta===b.cuenta) {
+          if (b.debe>0) {
+            a.debe.push(b.debe);
+          }
+          if (b.haber>0) {
+              a.haber.push(b.haber);
+          }
+
+        }
+      });
+    });
+
+
     this.balanzaComprobacion.forEach((a:any) => {
       this.registrosT.forEach((b:any) => {
         if (a.cuenta===b.cuenta) {
@@ -221,40 +256,15 @@ export class LibroDiarioComponent implements OnInit {
       }
 
     });
+    this.balanzaComprobacionResultados.forEach((element:any) => {
+      this.balanzaTotalDebe+=element.debe[0];
+      this.balanzaTotalHaber+=element.haber[0];
+    });
+
   }
 
-  crearTablasT(){
-    this.listaTablasT.forEach(tabla =>
-      this.listaPda.forEach( (pda:any) =>
-      {
-        pda.listaLineas.forEach((line:any) => {
-
-          console.log("tabla.cuenta");
-          console.log(tabla.cuenta);
-          console.log(line.cuenta);
-          if(tabla.cuenta==line.cuenta){
-            tabla.deberes.push(line.debe);
-            tabla.haberes.push(line.haber);
-
-          }
-          else {
-            this.listaTablasT.push({
-              cuenta: line.cuenta,
-              deberes: [line.debe] as any,
-              haberes: [line.haber] as any
-              });
-
-          };
-
-        });
-
-      }
-    )
-  );
-  console.log("Tablas T");
-  console.log(this.listaTablasT);
-
-}
-
+  cancelarPda(){
+    this.nuevoPda=[] as any;
+  }
 
 }

@@ -42,7 +42,7 @@
         </div>
 
         <br>
-        <button class="btn btn-dark" type="button" name="button"(click)="agregarLinea()">Agregar Linea a PDA</button>
+        <button class="btn btn-dark" type="button" name="button" (click)="agregarLinea()">Agregar Linea a PDA</button>
 
         <form class="" (submit)=agregarPda() action="index.html" method="post" >
         <br>
@@ -57,7 +57,7 @@
         <table class="table table-dark" id="pda_input_table">
         <thead>
           <tr>
-            <th scope="col">#</th>
+            <th scope="col">#{{contadorPda}}</th>
             <th scope="col">Descripcion</th>
             <th scope="col">Subcuenta</th>
             <th scope="col">Debe</th>
@@ -93,8 +93,6 @@
               </td>
           </tr>
           <tr>
-
-
         </tbody>
       </table>
       <div *ngIf="pdaNoCuadra" class="alert alert-danger box-msg alert-dismissible fade show" role="alert" id=fixedalert>
@@ -104,6 +102,7 @@
         <strong class="labelForm">Faltan campos para acceptar el registro.</strong>
       </div>
       <button class="btn btn-dark" type="submit" name="button">Agregar PDA</button>
+      <button type="button" class="btn btn-secondary" (click)="cancelarPda()">Cancelar PDA</button>
       </form>
       </div>
       <div class="col-1">
@@ -116,16 +115,122 @@
 
 
   </mat-tab>
-  <mat-tab label="Tablas T">
+  <mat-tab label="Libro Diario">
     <div class="col-1">
 
     </div>
     <div class="col-9">
-      <h3></h3>
+      <h3>Libro Diario</h3>
+      <table class="table table-dark" id="pda_input_table">
+      <thead>
+        <tr>
+          <th scope="col">Fecha</th>
+          <th scope="col">Descripcion</th>
+          <th scope="col">Subcuenta</th>
+          <th scope="col">Debe</th>
+          <th scope="col">Haber</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let pda of listaPda">
+          <tr>
+            <td>{{pda.fecha_creacion}}</td>
+            <td>PDA # {{pda.numeroPda}}</td>
+          </tr>
+          <tr *ngFor="let linea of pda.listaLineas">
+              <td></td>
+              <td>{{linea.cuenta}}</td>
+              <td>{{linea.subcuenta}}</td>
+              <td>{{linea.debe}}</td>
+              <td>{{linea.haber}}</td>
+            </tr>
+          <tr>
+            <th scope="row"></th>
+            <td>
+              <label for=""> {{pda.nombreRegistro}}</label>
+            </td>
+            <td>
+
+            </td>
+            <td>
+              <label for="">{{pda.totalDebe}}</label>
+            </td>
+            <td>
+              <label for="">{{pda.totalHaber}}</label>
+            </td>
+        </tr>
+        <tr>
+
+
+      </tbody>
+    </table>
     </div>
     <div class="col-1">
 
     </div>
+  </mat-tab>
+  <mat-tab label="Tablas T">
+    <div class="row">
+      <div class="col-1">
+
+      </div>
+      <div class="col-9">
+        <h3>Tablas de Mayorizacion</h3>
+
+        <div class="row">
+          <div class="d-flex flex-wrap col-4" *ngFor="let tab of tablasMayorizacion; index as i;">
+              <mat-card id="tablaT">
+                <strong>{{tab.cuenta}}</strong><br>
+                <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                  <div class="row tablaMayor">
+                    <div class="col-6">
+                      <table class="table table-dark">
+                        <thead>
+                          <tr>
+                            <th>Debe</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let line of tab.debe">
+                          <td >{{line}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="col-6">
+                      <table class="table table-dark">
+                        <thead>
+                          <tr>
+                            <th>Haber</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let line of tab.haber">
+                          <td >{{line}}</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                    </div>
+
+                  </div>
+                  <hr class="tablaMayor">
+                  <div class="row tablaMayor">
+                    <div class="col-6">
+                      {{this.balanzaComprobacionResultados[i].debe[0]}}
+                    </div>
+                    <div class="col-6">
+                      {{this.balanzaComprobacionResultados[i].haber[0]}}
+                    </div>
+                  </div>
+              </mat-card>
+          </div>
+        </div>
+      </div>
+      <div class="col-1">
+
+      </div>
+
+    </div>
+
 
   </mat-tab>
   <mat-tab label="Balanza de Comprobacion">
@@ -149,9 +254,9 @@
               <td>{{linea.haber[0]}}</td>
             </tr>
             <tr>
-              <td><strong>Total</strong></td>
-              <td><strong>tots</strong></td>
-              <td><strong>tots</strong></td>
+              <td><strong>Totales:</strong></td>
+              <td><strong>{{balanzaTotalDebe}}</strong></td>
+              <td><strong>{{balanzaTotalHaber}}</strong></td>
             </tr>
       </tbody>
     </table>

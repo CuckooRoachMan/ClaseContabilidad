@@ -4,6 +4,20 @@
 
 
 
-#pda_input_table {
+.tablaMayor {
+  background-color: #343a40;
+  color: white;
+}
 
+
+
+.row{
+  margin: 0;
+}
+
+label{
+  margin-left: 10px;
+}
+button{
+  margin-left: 10px;
 }
